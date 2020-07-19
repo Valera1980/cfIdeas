@@ -1,5 +1,8 @@
+import { delay } from 'rxjs/operators';
+import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpXhrBackend } from '@angular/common/http';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
+
 
 export function customFields(): any {
      return (target: any, propKey: string, propDescriptor: PropertyDescriptor) => {
@@ -18,7 +21,11 @@ export function customFields(): any {
 
           propDescriptor.value = function (...args: any[]) {
                console.log(args);
-               return  origin.apply(this);
+               const v: Observable<FormGroup> = origin.apply(this);
+               return v
+                    .pipe(
+                         delay(2000)
+                    )
                // console.log(form);
                // return of(form);
 
