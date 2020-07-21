@@ -1,5 +1,5 @@
 <p *ngIf="asyncPending">pending data.....</p>
-<div [formGroup]="form">
+<div *ngIf="!asyncPending" [formGroup]="form">
    <input formControlName="name">
-   <div #cfPlace>tttt</div>
 </div>
+<div #cfPlace>tttt</div>

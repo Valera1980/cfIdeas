@@ -2,6 +2,7 @@ import { delay } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
 import { HttpClient, HttpXhrBackend } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
+import { ComponentFactoryResolver } from '@angular/core';
 
 
 export function customFields(): any {
@@ -13,8 +14,8 @@ export function customFields(): any {
           console.log(target);
           console.log(propKey);
           console.log(propDescriptor);
-          const http = new HttpClient(new HttpXhrBackend({ build: () => new XMLHttpRequest() }));
-          const url = 'http://localhost:7777';
+          // const http = new HttpClient(new HttpXhrBackend({ build: () => new XMLHttpRequest() }));
+          // const url = 'http://localhost:7777';
           // http.get(url).subscribe();
 
 

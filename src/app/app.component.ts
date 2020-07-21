@@ -1,9 +1,10 @@
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { ICustomFieldComponent } from './interfaces/cf-component.intreface';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ComponentRef, ComponentFactoryResolver } from '@angular/core';
 import { HttpClient, HttpXhrBackend } from '@angular/common/http';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { customFields } from '../decorators/custom-fileld.decorator';
+import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -15,22 +16,35 @@ export class AppComponent implements OnInit, ICustomFieldComponent {
   title = 'ssr10';
   form: FormGroup;
   @ViewChild('cfPlace', { static: true }) cfPlace: ElementRef<any>;
-  constructor(private _fb: FormBuilder) {
+  formReady$ = new Subject();
+  constructor(
+    private _fb: FormBuilder,
+    private _http: HttpClient,
+    private _resolver: ComponentFactoryResolver
+    ) {
 
   }
   ngOnInit(): void {
     console.log('>>>>>>>>>>>>>>>>>>>');
     console.log(this.cfPlace);
-    this.buildForm(this.cfPlace).subscribe(f => {
+    this.buildForm().subscribe(f => {
       this.form = f;
       this.asyncPending = false;
+      this.formReady$.next();
     });
-    this.form.valueChanges.subscribe(v => {
-      console.log(v);
-    })
+
+    this.formReady$
+      .pipe(
+        mergeMap(() => {
+          return this.form.valueChanges;
+        })
+      ).subscribe(d => {
+        console.log(d);
+      });
+
   }
   @customFields()
-  buildForm(dom?: any): Observable<FormGroup> {
+  buildForm(): Observable<FormGroup> {
     return of(this._fb.group({
       name: ''
     }));
